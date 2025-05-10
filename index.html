@@ -1,232 +1,108 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Maa's Puzzle Day ❤️</title>
-    <style>
-        @import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap');
-
-        :root {
-            --pink-primary: #ff69b4;
-            --pink-secondary: #ff1493;
-            --pink-bg: #fff0f5;
-        }
-
-        body {
-            margin: 0;
-            font-family: 'Press Start 2P', cursive;
-            background: var(--pink-bg);
-            min-height: 100vh;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .maa-character {
-            width: 64px;
-            height: 64px;
-            background: url('https://i.imgur.com/8QfQk1g.png') 0 0;
-            image-rendering: pixelated;
-            animation: walk 1s steps(4) infinite;
-            margin: 20px auto;
-        }
-
-        @keyframes walk {
-            from { background-position: 0 0; }
-            to { background-position: -256px 0; }
-        }
-
-        .game-select {
-            text-align: center;
-            padding: 20px;
-        }
-
-        .game-btn {
-            background: var(--pink-primary);
-            border: 3px solid var(--pink-secondary);
-            padding: 15px 30px;
-            margin: 10px;
-            font-size: 1.2em;
-            cursor: pointer;
-            color: #fff;
-            border-radius: 10px;
-            transition: transform 0.3s, background 0.2s;
-        }
-
-        .game-btn:hover {
-            transform: scale(1.1);
-            background: var(--pink-secondary);
-        }
-
-        .game-container {
-            display: none;
-            padding: 20px;
-            position: relative;
-            text-align: center;
-        }
-
-        .back-btn {
-            position: absolute;
-            top: 10px;
-            left: 10px;
-            background: var(--pink-secondary);
-            color: #fff;
-            padding: 5px 10px;
-            border: none;
-            border-radius: 8px;
-            cursor: pointer;
-            font-size: 1em;
-            z-index: 10;
-        }
-
-        .slitherlink-grid {
-            background: #fff8fb;
-            padding: 20px;
-            border-radius: 10px;
-            margin: 20px auto;
-            position: relative;
-        }
-
-        .slitherlink-dot {
-            width: 10px;
-            height: 10px;
-            background: var(--pink-primary);
-            border-radius: 50%;
-            position: absolute;
-            cursor: pointer;
-        }
-
-        .slitherlink-line {
-            position: absolute;
-            background-color: var(--pink-primary);
-            width: 2px;
-            height: 2px;
-        }
-
-        .cell {
-            position: absolute;
-            width: 30px;
-            height: 30px;
-            border: 1px solid #ff69b4;
-        }
-
-        .cell-number {
-            font-size: 1.5em;
-            color: #ff69b4;
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-        }
-
-        /* Responsive Layout */
-        @media (max-width: 600px) {
-            .game-btn {
-                font-size: 1em;
-                padding: 10px 20px;
-            }
-
-            .maa-character {
-                width: 50px;
-                height: 50px;
-            }
-
-            .back-btn {
-                font-size: 0.9em;
-                padding: 5px 8px;
-            }
-
-            .sudoku-cell, .kakuro-cell {
-                width: 35px;
-                height: 35px;
-            }
-        }
-    </style>
+  <meta charset="UTF-8">
+  <title>Pixel Art Middle-Aged Indian Woman - Salwar Suit</title>
+  <style>
+    body {
+      background: #f0e6d2;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+    }
+    #pixel-art {
+      display: grid;
+      grid-template-rows: repeat(24, 16px);
+      grid-template-columns: repeat(16, 16px);
+      gap: 1px;
+      background: #fff;
+      box-shadow: 0 0 12px #aaa;
+    }
+    .pixel {
+      width: 16px;
+      height: 16px;
+      background: transparent;
+    }
+  </style>
 </head>
 <body>
-    <div class="game-select" id="main-menu">
-        <div class="maa-character"></div>
-        <h2>Happy Mother's Day, Maa! ❤️</h2>
-        <button class="game-btn" onclick="showGame('sudoku')">Sudoku</button>
-        <button class="game-btn" onclick="showGame('kakuro')">Kakuro</button>
-        <button class="game-btn" onclick="showGame('slitherlink')">Loop the Loop</button>
-    </div>
+  <div id="pixel-art"></div>
+  <script>
+    // Harmonious color palette
+    const SKIN = "#b68456";        // Medium brown skin
+    const HAIR = "#5b3b1b";        // Warm dark brown for curly hair
+    const KAMEEZ = "#3b82c4";      // Blue kameez
+    const SALWAR = "#e6c7e6";      // Soft lavender salwar
+    const DUPATTA = "#b93131";     // Deep red dupatta
+    const BINDI = "#c41e1e";       // Red bindi
+    const EYE = "#2a2323";         // Dark brown, not pure black
+    const LIP = "#a9445c";         // Muted pink lips
+    const SHOE = "#6e4c2a";        // Brown sandals
+    const JEWEL = "#e6c200";       // Gold for earrings/bangles
 
-    <!-- Slitherlink Game -->
-    <div class="game-container" id="slitherlink-game">
-        <button class="back-btn" onclick="showMainMenu()">← Back</button>
-        <h3>Loop the Loop (Slitherlink)</h3>
-        <div class="slitherlink-grid" id="slitherlink-grid"></div>
-    </div>
+    // Eyes for blinking
+    const eyes = [
+      { row: 6, col: 6 },
+      { row: 6, col: 9 }
+    ];
 
-    <script>
-        // Game Navigation
-        function showGame(game) {
-            document.querySelectorAll('.game-container').forEach(el => el.style.display = 'none');
-            document.getElementById(`${game}-game`).style.display = 'block';
-            document.getElementById('main-menu').style.display = 'none';
-            initializeGame(game);
+    // 24x16 grid for full body, short curly hair, salwar suit, jewelry
+    const womanPixelArt = [
+    // 0         1      2      3      4      5      6      7      8      9      10     11     12     13     14     15
+      ["",   "",   "",   HAIR, HAIR, "",   HAIR, "",   HAIR, "",   HAIR, HAIR, "",   "",   "",   ""], // 0
+      ["",   "",   HAIR, HAIR, HAIR, HAIR, HAIR, HAIR, HAIR, HAIR, HAIR, HAIR, HAIR, "",   "",   ""], // 1
+      ["",   JEWEL,"",   HAIR, HAIR, HAIR, HAIR, HAIR, HAIR, HAIR, HAIR, HAIR, HAIR, "",   JEWEL,""], // 2
+      ["",   HAIR, HAIR, HAIR, HAIR, HAIR, HAIR, HAIR, HAIR, HAIR, HAIR, HAIR, HAIR, HAIR, HAIR, ""], // 3
+      ["",   HAIR, HAIR, SKIN, SKIN, SKIN, SKIN, SKIN, SKIN, SKIN, SKIN, SKIN, HAIR, HAIR, HAIR, ""], // 4
+      ["",   HAIR, SKIN, SKIN, SKIN, SKIN, SKIN, SKIN, SKIN, SKIN, SKIN, SKIN, SKIN, HAIR, HAIR, ""], // 5
+      ["",   HAIR, SKIN, SKIN, SKIN, SKIN, EYE, SKIN, SKIN, EYE, SKIN, SKIN, SKIN, SKIN, HAIR, ""], // 6
+      ["",   HAIR, SKIN, SKIN, SKIN, SKIN, SKIN, BINDI, SKIN, SKIN, SKIN, SKIN, SKIN, SKIN, HAIR, ""], // 7
+      ["",   HAIR, SKIN, SKIN, SKIN, SKIN, SKIN, SKIN, SKIN, SKIN, SKIN, SKIN, SKIN, SKIN, HAIR, ""], // 8
+      ["",   HAIR, SKIN, SKIN, SKIN, SKIN, LIP, LIP, LIP, LIP, SKIN, SKIN, SKIN, SKIN, HAIR, ""], // 9
+      ["",   HAIR, SKIN, SKIN, SKIN, SKIN, SKIN, SKIN, SKIN, SKIN, SKIN, SKIN, SKIN, SKIN, HAIR, ""], // 10
+      ["",   HAIR, SKIN, SKIN, DUPATTA, DUPATTA, DUPATTA, SKIN, DUPATTA, DUPATTA, DUPATTA, SKIN, SKIN, SKIN, HAIR, ""], // 11
+      ["",   JEWEL,SKIN, DUPATTA, DUPATTA, KAMEEZ, KAMEEZ, KAMEEZ, KAMEEZ, KAMEEZ, DUPATTA, DUPATTA, SKIN, SKIN, JEWEL,""], // 12
+      ["",   SKIN, DUPATTA, KAMEEZ, KAMEEZ, KAMEEZ, KAMEEZ, KAMEEZ, KAMEEZ, KAMEEZ, KAMEEZ, KAMEEZ, DUPATTA, SKIN, "",   ""], // 13
+      ["",   "",   KAMEEZ, KAMEEZ, KAMEEZ, KAMEEZ, KAMEEZ, KAMEEZ, KAMEEZ, KAMEEZ, KAMEEZ, KAMEEZ, KAMEEZ, "",   "",   ""], // 14
+      ["",   "",   KAMEEZ, KAMEEZ, KAMEEZ, KAMEEZ, KAMEEZ, KAMEEZ, KAMEEZ, KAMEEZ, KAMEEZ, KAMEEZ, KAMEEZ, "",   "",   ""], // 15
+      ["",   "",   KAMEEZ, KAMEEZ, KAMEEZ, KAMEEZ, KAMEEZ, KAMEEZ, KAMEEZ, KAMEEZ, KAMEEZ, KAMEEZ, KAMEEZ, "",   "",   ""], // 16
+      ["",   "",   KAMEEZ, KAMEEZ, SALWAR, SALWAR, KAMEEZ, KAMEEZ, KAMEEZ, KAMEEZ, SALWAR, SALWAR, KAMEEZ, "",   "",   ""], // 17
+      ["",   "",   SALWAR, SALWAR, SALWAR, SALWAR, SALWAR, SALWAR, SALWAR, SALWAR, SALWAR, SALWAR, SALWAR, "",   "",   ""], // 18
+      ["",   "",   SALWAR, SALWAR, SALWAR, SALWAR, SALWAR, SALWAR, SALWAR, SALWAR, SALWAR, SALWAR, SALWAR, "",   "",   ""], // 19
+      ["",   "",   "",   JEWEL, "",   "",   JEWEL, "",   "",   JEWEL, "",   "",   JEWEL, "",   "",   ""], // 20 (bangles)
+      ["",   "",   "",   SHOE, "",   "",   SHOE, "",   "",   SHOE, "",   "",   SHOE, "",   "",   ""], // 21
+      ["",   "",   "",   SHOE, "",   "",   SHOE, "",   "",   SHOE, "",   "",   SHOE, "",   "",   ""], // 22
+      ["",   "",   "",   "",   "",   "",   "",   "",   "",   "",   "",   "",   "",   "",   "",   ""], // 23
+    ];
+
+    function renderPixelArt(artArray, blink = false) {
+      const container = document.getElementById('pixel-art');
+      container.innerHTML = '';
+      for (let r = 0; r < artArray.length; r++) {
+        for (let c = 0; c < artArray[r].length; c++) {
+          const div = document.createElement('div');
+          div.className = 'pixel';
+          let color = artArray[r][c];
+          // Animate blink by changing eye color
+          if (blink && eyes.some(e => e.row === r && e.col === c)) {
+            color = SKIN;
+          }
+          div.style.background = color || 'transparent';
+          container.appendChild(div);
         }
+      }
+    }
 
-        function showMainMenu() {
-            document.querySelectorAll('.game-container').forEach(el => el.style.display = 'none');
-            document.getElementById('main-menu').style.display = 'block';
-        }
+    // Animation loop for blinking
+    let blink = false;
+    setInterval(() => {
+      blink = !blink;
+      renderPixelArt(womanPixelArt, blink);
+    }, 900);
 
-        // Initialize Loop the Loop (Slitherlink) Game
-        function initSlitherlink() {
-            const grid = document.querySelector('#slitherlink-grid');
-            grid.innerHTML = '';
-            const size = 5; // 5x5 grid
-            const dotSpacing = 35; // Distance between dots
-            const gridSize = size * dotSpacing;
-            
-            let gridData = [
-                [1, 2, 1, 3, 2],
-                [2, 0, 2, 2, 3],
-                [1, 3, 0, 2, 1],
-                [2, 2, 2, 1, 2],
-                [1, 2, 2, 2, 1]
-            ];
-
-            // Create the grid cells and number markers
-            for (let row = 0; row < size; row++) {
-                for (let col = 0; col < size; col++) {
-                    const cell = document.createElement('div');
-                    cell.classList.add('cell');
-                    cell.style.top = `${row * dotSpacing}px`;
-                    cell.style.left = `${col * dotSpacing}px`;
-
-                    const cellNumber = document.createElement('div');
-                    cellNumber.classList.add('cell-number');
-                    cellNumber.textContent = gridData[row][col] === 0 ? '' : gridData[row][col];
-                    cell.appendChild(cellNumber);
-                    grid.appendChild(cell);
-                }
-            }
-
-            // Create the dots
-            for (let row = 0; row <= size; row++) {
-                for (let col = 0; col <= size; col++) {
-                    const dot = document.createElement('div');
-                    dot.classList.add('slitherlink-dot');
-                    dot.style.top = `${row * dotSpacing}px`;
-                    dot.style.left = `${col * dotSpacing}px`;
-                    grid.appendChild(dot);
-                }
-            }
-
-            // Allow connecting dots
-            grid.addEventListener('click', function(e) {
-                if (e.target.classList.contains('slitherlink-dot')) {
-                    const clickedDot = e.target;
-                    clickedDot.style.background = 'green'; // Example of clicked dot color
-                    // Add logic to start connecting dots with lines (not yet implemented)
-                }
-            });
-        }
-    </script>
+    // Initial render
+    renderPixelArt(womanPixelArt, false);
+  </script>
 </body>
 </html>
