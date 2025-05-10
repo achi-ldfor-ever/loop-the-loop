@@ -3,492 +3,230 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Loop the Loop Puzzle</title>
-    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+    <title>Maa's Puzzle Day ❤️</title>
     <style>
+        @import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap');
+
+        :root {
+            --pink-primary: #ff69b4;
+            --pink-secondary: #ff1493;
+            --pink-bg: #fff0f5;
+        }
+
         body {
-            font-family: 'Roboto', sans-serif;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            min-height: 100vh;
-            background-color: #f0f0f0;
             margin: 0;
-        }
-
-        .container {
-            background-color: white;
-            padding: 20px;
-            border-radius: 12px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-            text-align: center;
-            width: fit-content;
-        }
-
-        h1 {
-            margin-bottom: 20px;
-            color: #3498db;
-        }
-
-        #puzzle-canvas {
-            border: 2px solid #3498db;
-            border-radius: 8px;
-            margin-bottom: 20px;
-            cursor: pointer;
-        }
-
-        #controls {
+            font-family: 'Press Start 2P', cursive;
+            background: var(--pink-bg);
+            min-height: 100vh;
             display: flex;
-            gap: 10px;
+            flex-direction: column;
+            align-items: center;
             justify-content: center;
-            margin-bottom: 20px;
         }
 
-        .button {
-            padding: 10px 20px;
-            border: none;
-            border-radius: 5px;
-            background-color: #3498db;
-            color: white;
+        .maa-character {
+            width: 64px;
+            height: 64px;
+            background: url('https://i.imgur.com/8QfQk1g.png') 0 0;
+            image-rendering: pixelated;
+            animation: walk 1s steps(4) infinite;
+            margin: 20px auto;
+        }
+
+        @keyframes walk {
+            from { background-position: 0 0; }
+            to { background-position: -256px 0; }
+        }
+
+        .game-select {
+            text-align: center;
+            padding: 20px;
+        }
+
+        .game-btn {
+            background: var(--pink-primary);
+            border: 3px solid var(--pink-secondary);
+            padding: 15px 30px;
+            margin: 10px;
+            font-size: 1.2em;
             cursor: pointer;
-            font-size: 16px;
-            transition: background-color 0.3s ease;
-        }
-        .button:hover {
-                background-color: #217dbb;
+            color: #fff;
+            border-radius: 10px;
+            transition: transform 0.3s, background 0.2s;
         }
 
-        #message-box {
-            margin-top: 20px;
-            color: #27ae60;
-            font-size: 18px;
-            font-weight: bold;
+        .game-btn:hover {
+            transform: scale(1.1);
+            background: var(--pink-secondary);
         }
 
+        .game-container {
+            display: none;
+            padding: 20px;
+            position: relative;
+            text-align: center;
+        }
+
+        .back-btn {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            background: var(--pink-secondary);
+            color: #fff;
+            padding: 5px 10px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 1em;
+            z-index: 10;
+        }
+
+        .slitherlink-grid {
+            background: #fff8fb;
+            padding: 20px;
+            border-radius: 10px;
+            margin: 20px auto;
+            position: relative;
+        }
+
+        .slitherlink-dot {
+            width: 10px;
+            height: 10px;
+            background: var(--pink-primary);
+            border-radius: 50%;
+            position: absolute;
+            cursor: pointer;
+        }
+
+        .slitherlink-line {
+            position: absolute;
+            background-color: var(--pink-primary);
+            width: 2px;
+            height: 2px;
+        }
+
+        .cell {
+            position: absolute;
+            width: 30px;
+            height: 30px;
+            border: 1px solid #ff69b4;
+        }
+
+        .cell-number {
+            font-size: 1.5em;
+            color: #ff69b4;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+        }
+
+        /* Responsive Layout */
         @media (max-width: 600px) {
-            .container {
-                padding: 10px;
+            .game-btn {
+                font-size: 1em;
+                padding: 10px 20px;
             }
-            #controls {
-                flex-direction: column;
+
+            .maa-character {
+                width: 50px;
+                height: 50px;
             }
-            .button {
-                width: 100%;
-                text-align: center;
+
+            .back-btn {
+                font-size: 0.9em;
+                padding: 5px 8px;
+            }
+
+            .sudoku-cell, .kakuro-cell {
+                width: 35px;
+                height: 35px;
             }
         }
     </style>
+</head>
+<body>
+    <div class="game-select" id="main-menu">
+        <div class="maa-character"></div>
+        <h2>Happy Mother's Day, Maa! ❤️</h2>
+        <button class="game-btn" onclick="showGame('sudoku')">Sudoku</button>
+        <button class="game-btn" onclick="showGame('kakuro')">Kakuro</button>
+        <button class="game-btn" onclick="showGame('slitherlink')">Loop the Loop</button>
+    </div>
+
+    <!-- Slitherlink Game -->
+    <div class="game-container" id="slitherlink-game">
+        <button class="back-btn" onclick="showMainMenu()">← Back</button>
+        <h3>Loop the Loop (Slitherlink)</h3>
+        <div class="slitherlink-grid" id="slitherlink-grid"></div>
+    </div>
+
     <script>
-       //Helper functions
-        /**
-         * Creates a 2D array with the specified dimensions and initializes it with a given value.
-         *
-         * @param {number} rows - The number of rows in the array.
-         * @param {number} cols - The number of columns in the array.
-         * @param {any} initialValue - The value to initialize each element of the array with.
-         * @returns {Array<Array<any>>} A 2D array with the specified dimensions and initial value.
-         */
-        function createEmptyGrid(rows, cols, initialValue) {
-            const grid = [];
-            for (let i = 0; i < rows; i++) {
-                grid[i] = Array(cols).fill(initialValue);
-            }
-            return grid;
+        // Game Navigation
+        function showGame(game) {
+            document.querySelectorAll('.game-container').forEach(el => el.style.display = 'none');
+            document.getElementById(`${game}-game`).style.display = 'block';
+            document.getElementById('main-menu').style.display = 'none';
+            initializeGame(game);
         }
 
-        /**
-         * Creates a deep copy of a 2D array.
-         *
-         * @param {Array<Array<any>>} array - The 2D array to copy.
-         * @returns {Array<Array<any>>} A new 2D array that is a deep copy of the original.
-         */
-        function deepCopyGrid(array) {
-            return array.map(row => [...row]);
+        function showMainMenu() {
+            document.querySelectorAll('.game-container').forEach(el => el.style.display = 'none');
+            document.getElementById('main-menu').style.display = 'block';
         }
 
+        // Initialize Loop the Loop (Slitherlink) Game
+        function initSlitherlink() {
+            const grid = document.querySelector('#slitherlink-grid');
+            grid.innerHTML = '';
+            const size = 5; // 5x5 grid
+            const dotSpacing = 35; // Distance between dots
+            const gridSize = size * dotSpacing;
+            
+            let gridData = [
+                [1, 2, 1, 3, 2],
+                [2, 0, 2, 2, 3],
+                [1, 3, 0, 2, 1],
+                [2, 2, 2, 1, 2],
+                [1, 2, 2, 2, 1]
+            ];
 
+            // Create the grid cells and number markers
+            for (let row = 0; row < size; row++) {
+                for (let col = 0; col < size; col++) {
+                    const cell = document.createElement('div');
+                    cell.classList.add('cell');
+                    cell.style.top = `${row * dotSpacing}px`;
+                    cell.style.left = `${col * dotSpacing}px`;
 
-        // Game Constants
-        const GRID_SIZE = 5;
-        const CELL_SIZE = 50;
-        const DOT_RADIUS = 6;
-        const LINE_WIDTH = 4;
-        const LIGHT_LINE_WIDTH = 2; // For hints
-
-        // Colors
-        const BLACK = 'black';
-        const BLUE = '#3498db';  // For the loop
-        const LIGHT_BLUE = '#95a5a6'; // For potential lines/hints
-        const RED = '#e74c3c';    // For incorrect lines
-        const GREEN = '#2ecc71';  //For correct lines
-        const DOT_COLOR = '#3498db';
-        const NUMBER_COLOR = '#7f8c8d';
-        const BG_COLOR = '#ffffff';
-
-        // Game State Variables
-        let canvas;
-        let ctx;
-        let grid;
-        let playerLines;
-        let gameWon = false;
-        let highlightedDot = null; // Track the dot being hovered over
-        let currentLineStart = null;
-        let isMouseDown = false;
-
-        // Puzzle Definition (0: empty, 1-3: number of lines, -1: block)
-        const puzzle = [
-            [0, -1, 0, 2, 0],
-            [2, 0, 1, 0, -1],
-            [0, 1, 0, 0, 2],
-            [-1, 0, 2, 0, 0],
-            [0, 2, 0, -1, 0],
-        ];
-
-
-        function initializeGame() {
-            canvas = document.getElementById('puzzle-canvas');
-            if (!canvas) {
-                console.error('Canvas element not found!');
-                return;
-            }
-            ctx = canvas.getContext('2d');
-            if (!ctx) {
-                console.error('Failed to get canvas context!');
-                return;
-            }
-
-            canvas.width = GRID_SIZE * CELL_SIZE + (GRID_SIZE + 1) * DOT_RADIUS * 2;
-            canvas.height = GRID_SIZE * CELL_SIZE + (GRID_SIZE + 1) * DOT_RADIUS * 2;
-
-            grid = deepCopyGrid(puzzle); // Use deepCopyGrid
-            playerLines = createEmptyGrid(GRID_SIZE + 1, GRID_SIZE + 1, 0); // 0: none, 1: horizontal, 2: vertical, 3:diagonal
-            gameWon = false;
-            highlightedDot = null;
-            currentLineStart = null;
-            isMouseDown = false;
-
-            canvas.addEventListener('mousemove', handleMouseMove);
-            canvas.addEventListener('mousedown', handleMouseDown);
-            canvas.addEventListener('mouseup', handleMouseUp);
-            canvas.addEventListener('mouseleave', handleMouseLeave); //added mouseleave
-            drawPuzzle();
-        }
-
-
-        /**
-        * Draws the grid, numbers, dots, and lines of the puzzle.
-        * This function should be called whenever the game state changes
-        */
-        function drawPuzzle() {
-            ctx.fillStyle = BG_COLOR;
-            ctx.fillRect(0, 0, canvas.width, canvas.height);
-
-            // Draw the grid of dots
-            for (let row = 0; row <= GRID_SIZE; row++) {
-                for (let col = 0; col <= GRID_SIZE; col++) {
-                    drawDot(row, col);
+                    const cellNumber = document.createElement('div');
+                    cellNumber.classList.add('cell-number');
+                    cellNumber.textContent = gridData[row][col] === 0 ? '' : gridData[row][col];
+                    cell.appendChild(cellNumber);
+                    grid.appendChild(cell);
                 }
             }
 
-            // Draw the numbers
-            for (let row = 0; row < GRID_SIZE; row++) {
-                for (let col = 0; col < GRID_SIZE; col++) {
-                    drawNumber(row, col);
+            // Create the dots
+            for (let row = 0; row <= size; row++) {
+                for (let col = 0; col <= size; col++) {
+                    const dot = document.createElement('div');
+                    dot.classList.add('slitherlink-dot');
+                    dot.style.top = `${row * dotSpacing}px`;
+                    dot.style.left = `${col * dotSpacing}px`;
+                    grid.appendChild(dot);
                 }
             }
 
-            // Draw the lines
-            for (let row = 0; row <= GRID_SIZE; row++) {
-                for (let col = 0; col <= GRID_SIZE; col++) {
-                    drawPlayerLines(row, col);
+            // Allow connecting dots
+            grid.addEventListener('click', function(e) {
+                if (e.target.classList.contains('slitherlink-dot')) {
+                    const clickedDot = e.target;
+                    clickedDot.style.background = 'green'; // Example of clicked dot color
+                    // Add logic to start connecting dots with lines (not yet implemented)
                 }
-            }
-            drawHighlight(); //draw the highlighted dot
+            });
         }
-
-        /**
-         * Draws a dot at the specified grid coordinates.
-         *
-         * @param {number} row - The row coordinate of the dot.
-         * @param {number} col - The column coordinate of the dot.
-         */
-        function drawDot(row, col) {
-            const x = col * CELL_SIZE + (col + 1) * DOT_RADIUS * 2;
-            const y = row * CELL_SIZE + (row + 1) * DOT_RADIUS * 2;
-            ctx.beginPath();
-            ctx.arc(x, y, DOT_RADIUS, 0, 2 * Math.PI);
-            ctx.fillStyle = DOT_COLOR;
-            ctx.fill();
-            ctx.closePath();
-        }
-
-        /**
-         * Draws the number at the specified cell, or a block if the cell is blocked.
-         *
-         * @param {number} row - The row coordinate of the cell.
-         * @param {number} col - The column coordinate of the cell.
-         */
-        function drawNumber(row, col) {
-            const x = col * CELL_SIZE + (col + 1.5) * DOT_RADIUS * 2;
-            const y = row * CELL_SIZE + (row + 1.5) * DOT_RADIUS * 2;
-            ctx.fillStyle = NUMBER_COLOR;
-            ctx.font = '24px Roboto';
-            ctx.textAlign = 'center';
-            ctx.textBaseline = 'middle';
-
-            if (grid[row][col] === -1) {
-                ctx.fillRect(x - 10, y - 10, 20, 20); // Draw a small rectangle for a block
-            } else if (grid[row][col] > 0) {
-                ctx.fillText(grid[row][col], x, y);
-            }
-        }
-
-       /**
-        * Draws the player's lines (horizontal and vertical) based on the `playerLines` array.
-        *
-        * @param {number} row - The row coordinate.
-        * @param {number} col - The column coordinate.
-        */
-        function drawPlayerLines(row, col) {
-            const x = col * CELL_SIZE + (col + 1) * DOT_RADIUS * 2;
-            const y = row * CELL_SIZE + (row + 1) * DOT_RADIUS * 2;
-            ctx.lineWidth = LINE_WIDTH;
-
-            // Draw horizontal lines
-            if (col < GRID_SIZE) {
-                if (playerLines[row][col] === 1 || playerLines[row][col] === 3) {
-                    ctx.beginPath();
-                    ctx.moveTo(x, y);
-                    ctx.lineTo(x + CELL_SIZE + 2 * DOT_RADIUS, y);
-                    ctx.strokeStyle = getLineColor(row, col, 1);
-                    ctx.stroke();
-                    ctx.closePath();
-                }
-            }
-
-            // Draw vertical lines
-            if (row < GRID_SIZE) {
-                if (playerLines[row][col] === 2 || playerLines[row][col] === 3) {
-                    ctx.beginPath();
-                    ctx.moveTo(x, y);
-                    ctx.lineTo(x, y + CELL_SIZE + 2 * DOT_RADIUS);
-                    ctx.strokeStyle = getLineColor(row, col, 2);
-                    ctx.stroke();
-                    ctx.closePath();
-                }
-            }
-        }
-
-        /**
-         * Draws a highlight over the dot that is being hovered over
-         */
-        function drawHighlight() {
-            if (highlightedDot) {
-                const x = highlightedDot.col * CELL_SIZE + (highlightedDot.col + 1) * DOT_RADIUS * 2;
-                const y = highlightedDot.row * CELL_SIZE + (highlightedDot.row + 1) * DOT_RADIUS * 2;
-                ctx.beginPath();
-                ctx.arc(x, y, DOT_RADIUS + 3, 0, 2 * Math.PI); //make the highlight slightly bigger
-                ctx.fillStyle = "rgba(0, 149, 237, 0.3)";  // Semi-transparent blue
-                ctx.fill();
-                ctx.closePath();
-            }
-        }
-
-        /**
-         * Gets the color of the line based on whether it is correct, incorrect, or part of a closed loop
-         *
-         * @param {number} row - The row of the line
-         * @param {number} col - The column of the line
-         * @param {number} type - 1 for horizontal, 2 for vertical
-         * @returns {string} - the color of the line
-         */
-        function getLineColor(row, col, type) {
-            if (gameWon) {
-                return GREEN; //when the game is won, all lines are green
-            }
-            //check if the line is a correct line.
-            if (isLineCorrect(row, col, type)) {
-                return BLUE;
-            }
-            return LIGHT_BLUE;
-        }
-
-        /**
-         * Checks if a line is correct
-         * @param {number} row - The row of the line
-         * @param {number} col - The column of the line
-         * @param {number} type - 1 for horizontal, 2 for vertical
-         * @returns {boolean} - true if the line is correct, false otherwise
-         */
-        function isLineCorrect(row, col, type) {
-            let count = 0;
-            if (type === 1) { // Horizontal
-                if (row > 0 && grid[row - 1][col] !== -1) count++;
-                if (row < GRID_SIZE && grid[row][col] !== -1) count++;
-            } else { // Vertical
-                if (col > 0 && grid[row][col - 1] !== -1) count++;
-                if (col < GRID_SIZE && grid[row][col] !== -1) count++;
-            }
-            return count > 0;
-        }
-
-
-
-        /**
-         * Handles the mousemove event to highlight dots and draw potential lines
-         *
-         * @param {MouseEvent} event - The mouse event object.
-         */
-        function handleMouseMove(event) {
-            const rect = canvas.getBoundingClientRect();
-            const x = event.clientX - rect.left;
-            const y = event.clientY - rect.top;
-
-            // Find the closest dot
-            let closestDot = null;
-            let minDistance = Infinity;
-            for (let row = 0; row <= GRID_SIZE; row++) {
-                for (let col = 0; col <= GRID_SIZE; col++) {
-                    const dotX = col * CELL_SIZE + (col + 1) * DOT_RADIUS * 2;
-                    const dotY = row * CELL_SIZE + (row + 1) * DOT_RADIUS * 2;
-                    const distance = dist(x, y, dotX, dotY);
-                    if (distance < minDistance) {
-                        minDistance = distance;
-                        closestDot = { row, col };
-                    }
-                }
-            }
-
-            // Highlight the closest dot if it's close enough
-            if (minDistance < 20) { //snap distance
-                highlightedDot = closestDot;
-            } else {
-                highlightedDot = null;
-            }
-            drawPuzzle();
-
-            // Draw potential line
-            if (isMouseDown && currentLineStart && highlightedDot) {
-                const startX = currentLineStart.col * CELL_SIZE + (currentLineStart.col + 1) * DOT_RADIUS * 2;
-                const startY = currentLineStart.row * CELL_SIZE + (currentLineStart.row + 1) * DOT_RADIUS * 2;
-                const endX = highlightedDot.col * CELL_SIZE + (highlightedDot.col + 1) * DOT_RADIUS * 2;
-                const endY = highlightedDot.row * CELL_SIZE + (highlightedDot.row + 1) * DOT_RADIUS * 2;
-                ctx.strokeStyle = LIGHT_BLUE;
-                ctx.lineWidth = LIGHT_LINE_WIDTH;
-                ctx.beginPath();
-                ctx.moveTo(startX, startY);
-                ctx.lineTo(endX, endY);
-                ctx.stroke();
-                ctx.closePath();
-            }
-        }
-
-        /**
-         * Handles the mousedown event to start drawing a line.
-         *
-         * @param {MouseEvent} event - The mouse event object.
-         */
-        function handleMouseDown(event) {
-            isMouseDown = true;
-            if (highlightedDot) {
-                currentLineStart = highlightedDot;
-            }
-        }
-
-       /**
-         * Handles the mouseup event to stop drawing a line and create a permanent line
-         *
-         * @param {MouseEvent} event - The mouse event object.
-         */
-        function handleMouseUp(event) {
-            isMouseDown = false;
-            if (currentLineStart && highlightedDot) {
-                const startRow = currentLineStart.row;
-                const startCol = currentLineStart.col;
-                const endRow = highlightedDot.row;
-                const endCol = highlightedDot.col;
-
-                if (startRow === endRow && Math.abs(startCol - endCol) === 1) {
-                    // Horizontal line
-                    const col = Math.min(startCol, endCol);
-                    playerLines[startRow][col] = playerLines[startRow][col] === 0 ? 1 : playerLines[startRow][col] === 1 ? 0 : playerLines[startRow][col] === 2 ? 3 : 2; //toggle,  0->1, 1->0, 2->3, 3->2
-                } else if (startCol === endCol && Math.abs(startRow - endRow) === 1) {
-                    // Vertical line
-                    const row = Math.min(startRow, endRow);
-                    playerLines[row][startCol] = playerLines[row][startCol] === 0 ? 2 : playerLines[row][startCol] === 2 ? 0 : playerLines[row][startCol] === 1 ? 3 : 1; //toggle 0->2, 2->0, 1->3, 3->1
-                }
-                currentLineStart = null; //reset
-                drawPuzzle(); // Redraw the puzzle to show the new line
-                checkWin();
-            }
-        }
-
-        /**
-         * Handles the mouseleave event
-         */
-        function handleMouseLeave() {
-            isMouseDown = false;
-            currentLineStart = null;
-            highlightedDot = null;
-            drawPuzzle();
-        }
-
-        /**
-         * Checks if the game has been won by verifying that all numbered cells
-         * have the correct number of lines surrounding them.
-         */
-        function checkWin() {
-            for (let row = 0; row < GRID_SIZE; row++) {
-                for (let col = 0; col < GRID_SIZE; col++) {
-                    if (grid[row][col] > 0) { // Only check numbered cells
-                        let lineCount = 0;
-                        if (row > 0 && (playerLines[row - 1][col] === 2 || playerLines[row - 1][col] === 3)) lineCount++;
-                        if (row < GRID_SIZE && (playerLines[row][col] === 2 || playerLines[row][col] === 3)) lineCount++;
-                        if (col > 0 && (playerLines[row][col - 1] === 1 || playerLines[row][col - 1] === 3)) lineCount++;
-                        if (col < GRID_SIZE && (playerLines[row][col] === 1 || playerLines[row][col] === 3)) lineCount++;
-
-                        if (lineCount !== grid[row][col]) {
-                            return; // Game is not won
-                        }
-                    }
-                }
-            }
-
-            gameWon = true;
-            drawPuzzle(); // Redraw to show the winning state
-            showMessage('Congratulations! You solved the puzzle!');
-        }
-
-        /**
-         * Displays a message to the player.
-         *
-         * @param {string} message - The message to display.
-         */
-        function showMessage(message) {
-            const messageBox = document.getElementById('message-box');
-            messageBox.textContent = message;
-            // Clear the message after a few seconds
-            setTimeout(() => {
-                messageBox.textContent = '';
-            }, 3000);
-        }
-
-        /**
-         * Calculates the distance between two points.
-         *
-         * @param {number} x1 - The x-coordinate of the first point.
-         * @param {number} y1 - The y-coordinate of the first point.
-         * @param {number} x2 - The x-coordinate of the second point.
-         * @param {number} y2 - The y-coordinate of the second point.
-         * @returns {number} The distance between the two points.
-         */
-        function dist(x1, y1, x2, y2) {
-            return Math.sqrt(Math.pow(x2 - x1, 2) + Math.pow(y2 - y1, 2));
-        }
-
-
-        // --- Initialization ---
-        window.onload = initializeGame;
     </script>
 </body>
 </html>
