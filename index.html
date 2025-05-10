@@ -79,7 +79,7 @@
         }
     </style>
     <script>
-        //Helper functions
+       //Helper functions
         /**
          * Creates a 2D array with the specified dimensions and initializes it with a given value.
          *
@@ -147,7 +147,16 @@
 
         function initializeGame() {
             canvas = document.getElementById('puzzle-canvas');
+            if (!canvas) {
+                console.error('Canvas element not found!');
+                return;
+            }
             ctx = canvas.getContext('2d');
+            if (!ctx) {
+                console.error('Failed to get canvas context!');
+                return;
+            }
+
             canvas.width = GRID_SIZE * CELL_SIZE + (GRID_SIZE + 1) * DOT_RADIUS * 2;
             canvas.height = GRID_SIZE * CELL_SIZE + (GRID_SIZE + 1) * DOT_RADIUS * 2;
 
@@ -161,7 +170,7 @@
             canvas.addEventListener('mousemove', handleMouseMove);
             canvas.addEventListener('mousedown', handleMouseDown);
             canvas.addEventListener('mouseup', handleMouseUp);
-            canvas.addEventListener('mouseleave', handleMouseLeave); //addded mouseleave
+            canvas.addEventListener('mouseleave', handleMouseLeave); //added mouseleave
             drawPuzzle();
         }
 
@@ -234,11 +243,11 @@
             }
         }
 
-        /**
+       /**
         * Draws the player's lines (horizontal and vertical) based on the `playerLines` array.
-        * Also draws the highlighted line
-        * @param {number} row - The row coordinate of the dot.
-        * @param {number} col - The column coordinate of the dot.
+        *
+        * @param {number} row - The row coordinate.
+        * @param {number} col - The column coordinate.
         */
         function drawPlayerLines(row, col) {
             const x = col * CELL_SIZE + (col + 1) * DOT_RADIUS * 2;
@@ -246,23 +255,27 @@
             ctx.lineWidth = LINE_WIDTH;
 
             // Draw horizontal lines
-            if (col < GRID_SIZE && (playerLines[row][col] === 1 || playerLines[row][col] === 3)) {
-                ctx.beginPath();
-                ctx.moveTo(x, y);
-                ctx.lineTo(x + CELL_SIZE + 2 * DOT_RADIUS, y);
-                ctx.strokeStyle = getLineColor(row, col, 1);
-                ctx.stroke();
-                ctx.closePath();
+            if (col < GRID_SIZE) {
+                if (playerLines[row][col] === 1 || playerLines[row][col] === 3) {
+                    ctx.beginPath();
+                    ctx.moveTo(x, y);
+                    ctx.lineTo(x + CELL_SIZE + 2 * DOT_RADIUS, y);
+                    ctx.strokeStyle = getLineColor(row, col, 1);
+                    ctx.stroke();
+                    ctx.closePath();
+                }
             }
 
             // Draw vertical lines
-            if (row < GRID_SIZE && (playerLines[row][col] === 2 || playerLines[row][col] === 3)) {
-                ctx.beginPath();
-                ctx.moveTo(x, y);
-                ctx.lineTo(x, y + CELL_SIZE + 2 * DOT_RADIUS);
-                ctx.strokeStyle = getLineColor(row, col, 2);
-                ctx.stroke();
-                ctx.closePath();
+            if (row < GRID_SIZE) {
+                if (playerLines[row][col] === 2 || playerLines[row][col] === 3) {
+                    ctx.beginPath();
+                    ctx.moveTo(x, y);
+                    ctx.lineTo(x, y + CELL_SIZE + 2 * DOT_RADIUS);
+                    ctx.strokeStyle = getLineColor(row, col, 2);
+                    ctx.stroke();
+                    ctx.closePath();
+                }
             }
         }
 
@@ -310,14 +323,16 @@
         function isLineCorrect(row, col, type) {
             let count = 0;
             if (type === 1) { // Horizontal
-                if (row > 0 && grid[row-1][col] !== -1) count++;
+                if (row > 0 && grid[row - 1][col] !== -1) count++;
                 if (row < GRID_SIZE && grid[row][col] !== -1) count++;
             } else { // Vertical
-                if (col > 0 && grid[row][col-1] !== -1) count++;
+                if (col > 0 && grid[row][col - 1] !== -1) count++;
                 if (col < GRID_SIZE && grid[row][col] !== -1) count++;
             }
             return count > 0;
         }
+
+
 
         /**
          * Handles the mousemove event to highlight dots and draw potential lines
@@ -396,11 +411,11 @@
                 if (startRow === endRow && Math.abs(startCol - endCol) === 1) {
                     // Horizontal line
                     const col = Math.min(startCol, endCol);
-                    playerLines[startRow][col] = playerLines[startRow][col] === 0 ? 1 : playerLines[startRow][col] === 1 ? 0 : playerLines[startRow][col] === 2 ? 3: 2; //toggle,  0->1, 1->0, 2->3, 3->2
+                    playerLines[startRow][col] = playerLines[startRow][col] === 0 ? 1 : playerLines[startRow][col] === 1 ? 0 : playerLines[startRow][col] === 2 ? 3 : 2; //toggle,  0->1, 1->0, 2->3, 3->2
                 } else if (startCol === endCol && Math.abs(startRow - endRow) === 1) {
                     // Vertical line
                     const row = Math.min(startRow, endRow);
-                    playerLines[row][startCol] =  playerLines[row][startCol] === 0 ? 2 : playerLines[row][startCol] === 2 ? 0 : playerLines[row][startCol] === 1 ? 3 : 1; //toggle 0->2, 2->0, 1->3, 3->1
+                    playerLines[row][startCol] = playerLines[row][startCol] === 0 ? 2 : playerLines[row][startCol] === 2 ? 0 : playerLines[row][startCol] === 1 ? 3 : 1; //toggle 0->2, 2->0, 1->3, 3->1
                 }
                 currentLineStart = null; //reset
                 drawPuzzle(); // Redraw the puzzle to show the new line
@@ -427,9 +442,9 @@
                 for (let col = 0; col < GRID_SIZE; col++) {
                     if (grid[row][col] > 0) { // Only check numbered cells
                         let lineCount = 0;
-                        if (row > 0 && (playerLines[row-1][col] === 2 || playerLines[row-1][col] === 3)) lineCount++;
+                        if (row > 0 && (playerLines[row - 1][col] === 2 || playerLines[row - 1][col] === 3)) lineCount++;
                         if (row < GRID_SIZE && (playerLines[row][col] === 2 || playerLines[row][col] === 3)) lineCount++;
-                        if (col > 0 && (playerLines[row][col-1] === 1 || playerLines[row][col-1] === 3)) lineCount++;
+                        if (col > 0 && (playerLines[row][col - 1] === 1 || playerLines[row][col - 1] === 3)) lineCount++;
                         if (col < GRID_SIZE && (playerLines[row][col] === 1 || playerLines[row][col] === 3)) lineCount++;
 
                         if (lineCount !== grid[row][col]) {
@@ -458,6 +473,18 @@
             }, 3000);
         }
 
+        /**
+         * Calculates the distance between two points.
+         *
+         * @param {number} x1 - The x-coordinate of the first point.
+         * @param {number} y1 - The y-coordinate of the first point.
+         * @param {number} x2 - The x-coordinate of the second point.
+         * @param {number} y2 - The y-coordinate of the second point.
+         * @returns {number} The distance between the two points.
+         */
+        function dist(x1, y1, x2, y2) {
+            return Math.sqrt(Math.pow(x2 - x1, 2) + Math.pow(y2 - y1, 2));
+        }
 
 
         // --- Initialization ---
